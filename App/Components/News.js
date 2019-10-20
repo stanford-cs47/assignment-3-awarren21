@@ -9,33 +9,37 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types' //consider using this!
-import { StyleSheet, SafeAreaView, View, FlatList, Text, Linking } from 'react-native'
-import { material } from 'react-native-typography' //consider using this!
-import { Metrics, Colors } from '../Themes'
+import { StyleSheet, SafeAreaView, View, FlatList, Text, Linking } from 'react-native';
+import Article from './Article'
+import { useState } from 'react';
 
-export default class News extends Component {
-  static defaultProps = { articles: [] }
 
-  static propTypes = {
-    articles: PropTypes.array
-  }
-
-  //you can change the props above to whatever you want/need.
-
-  render () {
-    const {articles} = this.props;
-
+export default function News(props)  {
+renderArticle = (newsObject) => (
+  <Article
+    title = {newsObject.title}
+    author = {newsObject.byline}
+    date = {newsObject.date}
+    snippet = {newsObject.snippet}
+    url = {newsObject.url}
+    />
+);
     return (
       <View style={styles.container}>
-        {/*Some FlatList or SectionList*/}
+        <FlatList
+            data={props.articles}
+            renderItem = { ({ item }) => renderArticle(item)}
+            keyExtractor={item => item.url}
+          />
       </View>
     );
   }
-}
 
 
 const styles = StyleSheet.create({
   container: {
-
+  flex: 1,
+  width: '100%',
+  flexDirection: 'column',
   },
 });

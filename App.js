@@ -8,13 +8,13 @@
 */
 
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Image, Dimensions, TextInput, ActivityIndicator, TouchableOpacity, Linking } from 'react-native';
 import { Images, Colors } from './App/Themes'
 import APIRequest from './App/Config/APIRequest'
 
 import News from './App/Components/News'
 import Search from './App/Components/Search'
-
+const { width, height } = Dimensions.get('window')
 export default class App extends React.Component {
 
   state = {
@@ -23,11 +23,8 @@ export default class App extends React.Component {
     searchText: '',
     category: ''
   }
-
   componentDidMount() {
-
-    //uncomment this to run an API query!
-    //this.loadArticles();
+    this.loadArticles();
   }
 
   async loadArticles(searchTerm = '', category = '') {
@@ -38,28 +35,33 @@ export default class App extends React.Component {
     } else {
       resultArticles = await APIRequest.requestCategoryPosts(category);
     }
-    console.log(resultArticles);
     this.setState({loading: false, articles: resultArticles})
   }
 
-  render() {
-    const {articles, loading} = this.state;
+  getArticleContent = () =>{
+    let contentDisplated = null;
+    if(this.state.loading) {
+      contentDisplated = <ActivityIndicator
+      style = {styles.activityIndicator}
+      size = "large" color = "black"/>;
+    } else {
+      contentDisplated= <News articles = {this.state.articles}/>;
+    }
+      return (
+      <View style = {{flex: 1}}>
+        {contentDisplated}
+      </View>
+      )
+    }
 
+  render() {
     return (
       <SafeAreaView style={styles.container}>
-
-        <Text style={{textAlign: 'center'}}>Have fun! :) {"\n"} Start by changing the API Key in "./App/Config/AppConfig.js" {"\n"} Then, take a look at the following components: {"\n"} NavigationButtons {"\n"} Search {"\n"} News {"\n"} 🔥</Text>
-
-        {/*First, you'll need a logo*/}
-
-        {/*Then your search bar*/}
-
-        {/*And some news*/}
-
-        {/*Though, you can style and organize these however you want! power to you 😎*/}
-
-        {/*If you want to return custom stuff from the NYT API, checkout the APIRequest file!*/}
-
+        <Image style = {styles.logo}
+        source = {Images.logo}></Image>
+        <Search searchBar = {this.searchBar}
+          loadArticles = {searchText => this.loadArticles(searchText)}/>
+          {this.getArticleContent()}
       </SafeAreaView>
     );
   }
@@ -69,7 +71,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center'
-  }
+  },
+  activityIndicator: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+ },
+  logo: {
+    height: height * .1,
+    width: width * .9,
+    resizeMode: 'contain',
+    marginTop: 10,
+  },
+  
 });

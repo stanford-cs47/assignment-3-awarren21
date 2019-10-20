@@ -36,7 +36,6 @@ const APIRequest = {
         }
         result.push(newsObject);
       }
-
       return result;
     } catch (error) {
       console.error(error);
@@ -48,7 +47,6 @@ const APIRequest = {
       let parameters = {'api-key': AppConfig.apiKey};
       parameters = queryString.stringify(parameters);
       console.log('Searching using parameters: ' + parameters);
-
       let response = await fetch(AppConfig.topStories + category + '.json?' + parameters);
       let responseJson = await response.json();
       let articles = responseJson.results;
